@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="style.css" rel="stylesheet" type="text/css">
+    <title>Products-list</title>
+</head>
+<body>
+    <section class="products-list-wrapper">
+        <main class="products-list-main">
+            <header class="products-list-header">
+                <h1 class="header-headning">Список покупок</h1>
+            </header>
+            <section class="form-wrapper">
+                <form class="createListForm">
+                    <input
+                        class="createList"
+                        maxLength = 50
+                        placeholder = 'Введите наименование продукта'
+                        type = 'text'
+                        name = "list"
+                    />
+                    <button class="button-add-list" type="submit">Добавить в список</button>
+                </form>
+                <div class="overlay">
+                    <ul class="tasks">
+                        <li>
+                            <div class="content">
+                                <input type="text" disabled value="lalalaalal" class="ListkInput"/>
+                            </div>
+                            <div class="actions">
+                                <div class="controls">
+                                    <button type="button" class="button-control minus">-</button>
+                                    <input type="text" disabled value="1" class="control-value">
+                                    <button type="button" class="button-control plus">+</button>
+                                </div>
+                                <button class="remove"></button>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+    </section>
+</body>
+</html>
