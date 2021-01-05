@@ -92,16 +92,16 @@ body section {
 .button-add-list:hover {
     background-color: #136BD6;
 }
-.tasks {
+.list {
     min-height: 370px;
     max-height: 370px;
     overflow: scroll;
     padding-left: 0;
 }
-.tasks::-webkit-scrollbar {
+.list::-webkit-scrollbar {
     display: none;
 }
-.tasks li {
+.list li {
     position: relative;
     display: flex;
     align-items: center;
@@ -115,10 +115,10 @@ body section {
     font-size: 20px;
     font-weight: 400;
 }
-.tasks li svg {
+.list li svg {
     cursor: pointer;
 }
-.tasks li .content {
+.list li .content {
     display: flex;
     align-items: center;
     width: 83%; 
@@ -133,13 +133,13 @@ body section {
     font-size: 20px;
     text-overflow: ellipsis;
 }
-.tasks li .actions {
+.list li .actions {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.tasks li .actions .remove {
+.list li .actions .remove {
     display: inline-block;
     width: 17px;
     height: 17px;
@@ -148,7 +148,7 @@ body section {
     background-size: cover;
     border: none;
 }
-.tasks li .actions .remove:hover {
+.list li .actions .remove:hover {
     cursor: pointer;
     background-image: url("./images/removeHover.svg"); 
 }
