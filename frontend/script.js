@@ -33,7 +33,7 @@ function sendRequest({method, body, path}) {
  * @param {{id:number; text:string; count:number;}} list
  */
 
-function getListTemplate(list) {
+function getItemTemplate(list) {
     return `<div class="content">
                 <input type="text" disabled value="${list.text}" class="ListInput"/>
             </div>
@@ -52,12 +52,12 @@ function getListTemplate(list) {
  * @param {id:number; text:string; count:number} list 
  */
 
-function renderList(list) {
+function renderListItem(list) {
     const ListDom = document.querySelector('.list');
     const ListElemDom = document.createElement('li');
     ListElemDom.dataset.id = list.id;
 
-    ListElemDom.innerHTML = getListTemplate(list);
+    ListElemDom.innerHTML = getItemTemplate(list);
     const inputCount = ListElemDom.querySelector('.control-value');
     if (+inputCount.value === 1) {
         const buttonMinus = ListElemDom.querySelector('.minus');
@@ -75,7 +75,7 @@ function renderList(list) {
  * @param {string} text
  */
 
-function addList(text) {
+function addItem(text) {
     const defaultCount = 1;
     const newList = {
         text: text,
@@ -89,7 +89,7 @@ function addList(text) {
     .then((data) => {
         newList.id = data.id;
         products.push(newList);
-        renderList(newList)
+        renderListItem(newList)
         form.reset();
     })
 
@@ -99,7 +99,7 @@ function addList(text) {
  * @param {number} id
 */
 
-function deleteList(id) {
+function deleteItem(id) {
     return sendRequest({
         method: "DELETE",
         path: id
@@ -144,7 +144,7 @@ const addRemoveHandler = (ListElemDom) => {
     const removeDom = ListElemDom.querySelector('.remove');
     removeDom.onclick = () => {
         const id = +ListElemDom.dataset.id;
-        deleteList(id)
+        deleteItem(id)
         .then(() => {
             ListElemDom.remove();
         })
@@ -203,7 +203,7 @@ form.onsubmit = function(event) {
     const list = formData.get('list');
      
     if (list.trim()) {
-        addList(list)
+        addItem(list)
     } 
 }
 
@@ -214,6 +214,6 @@ fetch(url)
 .then(data => {
     for(let i=0; i<data.length; i++) {
         products.push(data[i]);
-        renderList(data[i]);
+        renderListItem(data[i]);
     }
 })
