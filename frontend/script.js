@@ -1,8 +1,4 @@
 const form = document.querySelector('.createListForm');
-const buttonPlus = document.querySelector('.plus');
-const buttonMinus = document.querySelector('.minus');
-
-console.log(buttonMinus);
 
 const lis = [];
 const url = 'http://localhost:3030/products';
@@ -64,6 +60,8 @@ function renderList(list) {
     ListElemDom.innerHTML = getListTemplate(list);
     ListDom.append(ListElemDom);
     addRemoveHandler(ListElemDom);
+    addPlusHandler(ListElemDom);
+    addMinusHandler(ListElemDom);
 }
 
 
@@ -116,7 +114,7 @@ function deleteList(id) {
  */
 
 function setCount(id,value) {
-    sendRequest({
+    return sendRequest({
         method: 'PUT',
         path: id,
         body: {
@@ -125,8 +123,8 @@ function setCount(id,value) {
     })
     .then(() => {
         const list = lis.find(item => item.id === id);
-        if (todo) {
-            todo.count = value;
+        if (list) {
+            list.count = value;
         } else {
             console.error("Редактируемого элемента нет в массиве :( ");
         }
@@ -134,7 +132,6 @@ function setCount(id,value) {
 }
 
 /**
- * 
  * @param {Node} taskDom 
  */
 const addRemoveHandler = (ListElemDom) => {
@@ -144,6 +141,49 @@ const addRemoveHandler = (ListElemDom) => {
         deleteList(id)
         .then(() => {
             ListElemDom.remove();
+        })
+    }
+}
+
+/**
+ * @param {Node} taskDom 
+ */
+const addPlusHandler = (ListElemDom) => {
+    const buttonPlus = ListElemDom.querySelector('.plus');
+    const inputCount = ListElemDom.querySelector('.control-value');
+    const buttonMinus = ListElemDom.querySelector('.minus');
+    
+    buttonPlus.onclick = function() {
+        let indexId = +ListElemDom.dataset.id;
+        let valueCount = +inputCount.value;
+        const newValue = valueCount + 1;
+        setCount(indexId,newValue)
+        .then(() => {
+            inputCount.value = newValue;
+            buttonMinus.disabled = '';
+        })
+    }
+}
+
+/**
+ * @param {Node} taskDom 
+ */
+const addMinusHandler = (ListElemDom) => {
+    const buttonMinus = ListElemDom.querySelector('.minus');
+    const inputCount = ListElemDom.querySelector('.control-value');
+
+    buttonMinus.onclick = function() {
+        let indexId = +ListElemDom.dataset.id;
+        let valueCount = +inputCount.value;
+        const newValue = valueCount - 1;
+        setCount(indexId,valueCount)
+        .then(() => {
+            if(valueCount === 1) {
+                buttonMinus.disabled = true;
+            }else{
+                inputCount.value = newValue;
+               
+            }
         })
     }
 }
@@ -163,42 +203,50 @@ form.onsubmit = function(event) {
     } 
 }
 
-buttonPlus.onclick = () => {
-    debugger;
-    const ListDom = document.querySelector('.list');
-    const ListElemDom = ListDom.querySelector('li')
-    const inputCount = ListElemDom.querySelector('.control-value');
 
-    let indexId = ListElemDom.dataset.id;
-    let valueCount = +inputCount.value;
+// for(let i=0; i<buttonPlus.length; i++) {
+//     buttonPlus[i].onclick = function() {
+//         const ListElemDom = buttonPlus[i].closest('li');
+//         const inputCount = ListElemDom.querySelector('.control-value');
 
-    sendRequest(indexId,valueCount)
-    .then(() => {
-        valueCount++;
-    })
-}
+//         let indexId = ListElemDom.dataset.id;
+//         let valueCount = +inputCount.value;
+        
+//         sendRequest(indexId,valueCount)
+//         .then(() => {
+//             valueCount++;
+//         })
+//     }
+// }
 
-buttonMinus.onclick = () => {
-    const ListDom = document.querySelector('.list');
-    const ListElemDom = ListDom.querySelector('li')
-    const inputCount = ListElemDom.querySelector('.control-value');
+// for(let i=0; i<buttonMinus.length; i++) {
+//     buttonMinus[i].onclick = function() {
+//         const ListElemDom = buttonMinus[i].closest('li');
+//         const inputCount = ListElemDom.querySelector('.control-value');
 
-    let indexId = ListElemDom.dataset.id;
-    let valueCount = +inputCount.value;
-
-    sendRequest(indexId,valueCount)
-    .then(() => {
-        if(valueCount === 1) {
-            buttonMinus.disabled = 'true';
-        }else {
-            valueCount--;
-        }
-       
-    })
-}
+//         let indexId = ListElemDom.dataset.id;
+//         let valueCount = +inputCount.value;
+        
+//         sendRequest(indexId,valueCount)
+//         .then(() => {
+//             if(valueCount === 1) {
+//                 buttonMinus[i].disabled = 'true';
+//             }else {
+//                 valueCount--;
+//             }
+        
+//         })
+//     }
+// }
 
 
 // INIT
 
 fetch(url)
 .then(data => data.json())
+.then(data => {
+    for(let i=0; i<data.length; i++) {
+        lis.push(data[i]);
+        renderList(data[i]);
+    }
+})
