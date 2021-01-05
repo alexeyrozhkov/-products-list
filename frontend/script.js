@@ -1,6 +1,6 @@
 const form = document.querySelector('.createListForm');
 
-const lis = [];
+const products = [];
 const url = 'http://localhost:3030/products';
 
 /**
@@ -30,12 +30,12 @@ function sendRequest({method, body, path}) {
 
 
 /**
- * @param {{id:number; text:string; count:numder;}} list
+ * @param {{id:number; text:string; count:number;}} list
  */
 
 function getListTemplate(list) {
     return `<div class="content">
-                <input type="text" disabled value="${list.text}" class="ListkInput"/>
+                <input type="text" disabled value="${list.text}" class="ListInput"/>
             </div>
             <div class="actions">
                 <div class="controls">
@@ -58,6 +58,12 @@ function renderList(list) {
     ListElemDom.dataset.id = list.id;
 
     ListElemDom.innerHTML = getListTemplate(list);
+    const inputCount = ListElemDom.querySelector('.control-value');
+    if (+inputCount.value === 1) {
+        const buttonMinus = ListElemDom.querySelector('.minus');
+        buttonMinus.disabled = true;
+    }
+
     ListDom.append(ListElemDom);
     addRemoveHandler(ListElemDom);
     addPlusHandler(ListElemDom);
@@ -82,7 +88,7 @@ function addList(text) {
     .then(data => data.json())
     .then((data) => {
         newList.id = data.id;
-        lis.push(newList);
+        products.push(newList);
         renderList(newList)
         form.reset();
     })
@@ -99,12 +105,12 @@ function deleteList(id) {
         path: id
      })
     .then(() => {
-        const deletedTodoIndex = lis.findIndex(item => item.id === id);
+        const deletedTodoIndex = products.findIndex(item => item.id === id);
         if (deletedTodoIndex === -1) {
             console.error("Удаляемого элемента нет в массиве :( ");
             return;
         };
-        lis.splice(deletedTodoIndex, 1);
+        products.splice(deletedTodoIndex, 1);
     })
 }
 
@@ -122,9 +128,9 @@ function setCount(id,value) {
         }
     })
     .then(() => {
-        const list = lis.find(item => item.id === id);
-        if (list) {
-            list.count = value;
+        const item = products.find(item => item.id === id);
+        if (item) {
+            item.count = value;
         } else {
             console.error("Редактируемого элемента нет в массиве :( ");
         }
@@ -176,13 +182,11 @@ const addMinusHandler = (ListElemDom) => {
         let indexId = +ListElemDom.dataset.id;
         let valueCount = +inputCount.value;
         const newValue = valueCount - 1;
-        setCount(indexId,valueCount)
+        setCount(indexId,newValue)
         .then(() => {
-            if(valueCount === 1) {
+            inputCount.value = newValue;
+            if(newValue === 1) {
                 buttonMinus.disabled = true;
-            }else{
-                inputCount.value = newValue;
-               
             }
         })
     }
@@ -203,50 +207,13 @@ form.onsubmit = function(event) {
     } 
 }
 
-
-// for(let i=0; i<buttonPlus.length; i++) {
-//     buttonPlus[i].onclick = function() {
-//         const ListElemDom = buttonPlus[i].closest('li');
-//         const inputCount = ListElemDom.querySelector('.control-value');
-
-//         let indexId = ListElemDom.dataset.id;
-//         let valueCount = +inputCount.value;
-        
-//         sendRequest(indexId,valueCount)
-//         .then(() => {
-//             valueCount++;
-//         })
-//     }
-// }
-
-// for(let i=0; i<buttonMinus.length; i++) {
-//     buttonMinus[i].onclick = function() {
-//         const ListElemDom = buttonMinus[i].closest('li');
-//         const inputCount = ListElemDom.querySelector('.control-value');
-
-//         let indexId = ListElemDom.dataset.id;
-//         let valueCount = +inputCount.value;
-        
-//         sendRequest(indexId,valueCount)
-//         .then(() => {
-//             if(valueCount === 1) {
-//                 buttonMinus[i].disabled = 'true';
-//             }else {
-//                 valueCount--;
-//             }
-        
-//         })
-//     }
-// }
-
-
 // INIT
 
 fetch(url)
 .then(data => data.json())
 .then(data => {
     for(let i=0; i<data.length; i++) {
-        lis.push(data[i]);
+        products.push(data[i]);
         renderList(data[i]);
     }
 })
